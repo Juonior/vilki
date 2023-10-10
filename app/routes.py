@@ -41,7 +41,6 @@ def start_scanner():
                     if o1 != 0 and o2 != 0 and f1 != 0 and f2 != 0:
                         k1 = (1 / o1) + (1 / f2)
                         k2 = (1 / f1) + (1 / o2)
-                        time_now = datetime.now().strftime("[%H:%M:%S]")
                         if k1 < k2:
                             percent = round((1 - k1) * 100, 2)
                             if 10 > percent > 0:
