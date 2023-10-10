@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Процент взаимоставки</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Напишу тут что-то позже</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Событие</th>
+                    <th>Название матча</th>
+                    <th>Сайт</th>
+                    <th>Тип ставки</th>
+                    <th>Коэффициент</th>
+                    <th>Ссылка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr>
+                    <td>{{ event.matchName1}}</td>
+                    <td><button class="btn btn-primary copy-button" data-copy="{{ event.matchName1 }}">Копировать</button></td>
+                    <td>{{ 'Сайт #1: ' ~ event.site1 }}</td>
+                    <td>{{ event.type1 }}</td>
+                    <td>{{ event.coefficient1 }}</td>
+                    <td><a href="{{ event.link1 }}" target="_blank">{{ event.link1 }}</a></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><button class="btn btn-primary copy-button" data-copy="{{ event.matchName2 }}">Копировать</button></td>
+                    <td>{{ 'Сайт #2: ' ~ event.site2 }}</td>
+                    <td>Тип ставки: {{ event.type2 }}</td>
+                    <td>Коэффициент: {{ event.coefficient2 }}</td>
+                    <td><a href="{{ event.link2 }}" target="_blank">{{ event.link2 }}</a></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-right"><strong>Profit: {{ event.profit }}%</strong></td>
+                    <td></td>
+                </tr>
+                <tr class="event-separator">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript для копирования названия матча
+        const copyButtons = document.querySelectorAll('.copy-button');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const matchName = button.getAttribute('data-copy');
+                copyToClipboard(matchName);
+            });
+        });
+
+        function copyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
