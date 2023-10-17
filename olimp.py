@@ -7,24 +7,32 @@ headers = {
 bets = {}
 def main():
     response = requests.get("https://www.olimp.bet/api/v4/0/live/broadcast/sports-with-competitions-with-events", headers=headers).json()
-    # for args in response[0]["payload"]:
-    #     print(response[0][args])
     i = 0
     for sport in range(len(response)):
         sport_name = response[sport]["payload"]["sport"]["name"]
         if sport_name == "Теннис":
-            # print(sport_name)
             for competition in response[sport]["payload"]["competitionsWithEvents"]:
                 i +=1
-                # print(competition["competition"]["name"])
                 for event in competition["events"]:
                     event_name = event["names"]["0"].replace('.','')
-                    bets[event_name] = {"П1": 0, "П2": 0, "url": "https://www.olimp.bet/live/"+str(event["sportId"])+"/"+str(event["competitionId"])+"/"+str(event['id'])}
-                    # print("-",event_name)
+                    bets[event_name] = {"url": "https://www.olimp.bet/live/"+str(event["sportId"])+"/"+str(event["competitionId"])+"/"+str(event['id'])}
                     if len(event["outcomes"]) > 0:
                         for outcome in event["outcomes"]:
-                            # print(outcome["shortName"])
-                            bets[event_name][outcome["shortName"]] = float(outcome["probability"])
+                            if outcome["shortName"] == "П1" or outcome["shortName"] == "П2":
+                                bets[event_name][outcome["shortName"]] = float(outcome["probability"])
+                            else:
+                                bet_type = outcome["unprocessedName"]
+                                if "Тотал" in bet_type: 
+                                    if "мен" in bet_type:
+                                        bet_type = bet_type.replace("мен", "").replace("Тотал", "ТМ").replace(") ", ")")
+                                    else:
+                                        bet_type = bet_type.replace("бол", "").replace("Тотал", "ТБ").replace(") ", ")")
+                                elif "с форой" in bet_type:
+                                    bet_type = bet_type.replace("П1 с форой", "Ф1")
+                                    bet_type = bet_type.replace("П2 с форой", "Ф2")
+                                    if "Ф2" in bet_type: 
+                                        if "Ф2 (+" not in bet_type and "Ф2 (-" not in bet_type:
+                                            bet_type = bet_type.replace("Ф2 (", "Ф2 (+")
+                                bets[event_name][bet_type] = float(outcome["probability"])
             break
     return bets
-# print(main())
