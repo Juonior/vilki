@@ -8,12 +8,11 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Напишу тут что-то позже</h1>
+        <h1 class="text-center">OFBet Bot</h1>
         <table class="table">
             <thead>
                 <tr>
                     <th>Событие</th>
-                    <th>Название матча</th>
                     <th>Сайт</th>
                     <th>Тип ставки</th>
                     <th>Коэффициент</th>
@@ -21,35 +20,6 @@
                 </tr>
             </thead>
             <tbody>
-                {% for event in events %}
-                <tr>
-                    <td>{{ event.matchName1}}</td>
-                    <td><button class="btn btn-primary copy-button" data-copy="{{ event.matchName1 }}">Копировать</button></td>
-                    <td>{{ 'Сайт #1: ' ~ event.site1 }}</td>
-                    <td>{{ event.type1 }}</td>
-                    <td>{{ event.coefficient1 }}</td>
-                    <td><a href="{{ event.link1 }}" target="_blank">{{ event.link1 }}</a></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><button class="btn btn-primary copy-button" data-copy="{{ event.matchName2 }}">Копировать</button></td>
-                    <td>{{ 'Сайт #2: ' ~ event.site2 }}</td>
-                    <td>Тип ставки: {{ event.type2 }}</td>
-                    <td>Коэффициент: {{ event.coefficient2 }}</td>
-                    <td><a href="{{ event.link2 }}" target="_blank">{{ event.link2 }}</a></td>
-                </tr>
-                <tr>
-                    <td colspan="4" class="text-right"><strong>Profit: {{ event.profit }}%</strong></td>
-                    <td></td>
-                </tr>
-                <tr class="event-separator">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -75,5 +45,108 @@
             document.body.removeChild(textArea);
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io.connect(window.location.origin);
+    
+        socket.on('connect', function () {
+            console.log('Connected to the server.');
+        });
+    
+        socket.on('update_event', function (newEvent) {
+            // Handle the new event data and update the page as needed
+            // For example, you can append the new event to the table.
+            
+            const tableBody = document.querySelector('tbody');
+            
+            // First match row
+            const match1Row = document.createElement('tr');
+            const match1Data = [
+                newEvent.matchName1,
+                newEvent.site1,
+                newEvent.type1,
+                newEvent.coefficient1,
+                `<a href="${newEvent.link1}" target="_blank">${newEvent.link1}</a>`
+            ];
+            
+            match1Data.forEach((data, index) => {
+                const cell = document.createElement(index === 0 ? 'th' : 'td');
+                if (index === 0) {
+                    const link = document.createElement('a');
+                    link.textContent = data;
+                    link.href = '#';  // Set an empty href, we'll handle the click event.
+                    link.addEventListener('click', () => copyToClipboard(data));
+                    cell.appendChild(link);
+                } else {
+                    cell.innerHTML = data;
+                }
+                match1Row.appendChild(cell);
+            });
+            
+            tableBody.appendChild(match1Row);
+            
+            // Second match row
+            const match2Row = document.createElement('tr');
+            const match2Data = [
+                newEvent.matchName2,
+                newEvent.site2,
+                newEvent.type2,
+                newEvent.coefficient2,
+                `<a href="${newEvent.link2}" target="_blank">${newEvent.link2}</a>`
+            ];
+            
+            match2Data.forEach((data, index) => {
+                const cell = document.createElement(index === 0 ? 'th' : 'td');
+                if (index === 0) {
+                    const link = document.createElement('a');
+                    link.textContent = data;
+                    link.href = '#';  // Set an empty href, we'll handle the click event.
+                    link.addEventListener('click', () => copyToClipboard(data));
+                    cell.appendChild(link);
+                } else {
+                    cell.innerHTML = data;
+                }
+                match2Row.appendChild(cell);
+            });
+            
+            tableBody.appendChild(match2Row);
+            
+            // Profit row
+            const profitRow = document.createElement('tr');
+            const profitCell = document.createElement('td');
+            profitCell.colSpan = 6;
+            profitCell.textContent = 'Profit: ' + newEvent.profit + '%';
+            profitRow.appendChild(profitCell);
+            
+            tableBody.appendChild(profitRow);
+            
+            // Event separator row
+            const separatorRow = document.createElement('tr');
+            const separatorCell = document.createElement('td');
+            separatorCell.colSpan = 6;
+            separatorRow.appendChild(separatorCell);
+            
+            tableBody.appendChild(separatorRow);
+        });
+        
+        document.getElementById('clear-table-button').addEventListener('click', function () {
+            socket.emit('clear_table');
+        });
+        
+        function copyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+    </script>
+    </body>
+    </html>
+    
+    </body>
+    </html>
+    
 </body>
 </html>

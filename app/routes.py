@@ -1,5 +1,7 @@
 from flask import request, jsonify, render_template
 from app import events_flask
+from app import addNewEvent
+from app import app
 import threading,time
 from fuzzywuzzy import fuzz
 from datetime import datetime
@@ -36,7 +38,7 @@ def start_scanner():
         similar_strings = find_similar_strings(o, f, 70)
         for event2, event in similar_strings:
             for overlapping_bid in overlapping_bids:
-                if overlapping_bid[0] in o[event2].keys() and overlapping_bid[0] in f[event].keys():
+                if overlapping_bid[0] in o[event2].keys() and overlapping_bid[0] in f[event].keys() and overlapping_bid[1] in o[event2].keys() and overlapping_bid[1] in f[event].keys():
                     o1, o2, f1, f2 = o[event2][overlapping_bid[0]], o[event2][overlapping_bid[1]], f[event][overlapping_bid[0]], f[event][overlapping_bid[1]]
                     if o1 != 0 and o2 != 0 and f1 != 0 and f2 != 0:
                         k1 = (1 / o1) + (1 / f2)
@@ -57,7 +59,10 @@ def start_scanner():
                                     'matchName2': event2,
                                     'profit': percent
                                 }
-                                events_flask.append(event_flask)
+                                with app.app_context():
+                                    addNewEvent(event_flask)
+                                # events_flask.append(event_flask)
+                                
                         else:
                             percent = round((1 - k2) * 100, 2)
                             if 10 > percent > 0:
@@ -74,5 +79,7 @@ def start_scanner():
                                     'matchName2': event2,
                                     'profit': percent
                                 }
-                                events_flask.append(event_flask)
+                                with app.app_context():
+                                    addNewEvent(event_flask)
+                                # events_flask.append(event_flask)
         time.sleep(cooldown)
