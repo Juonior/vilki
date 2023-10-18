@@ -87,7 +87,7 @@ def start_scanner():
                                 
                         else:
                             percent = round((1 - k2) * 100, 2)
-                            if 10 > percent > 0:
+                            if 10 >percent > 0:
                                 if not "".join([event,str(k1),str(k2)]) in first_appearance_times:
                                     first_appearance_times[ "".join([event,str(k1),str(k2)])] = datetime.now()
                                 event_flask = {

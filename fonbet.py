@@ -1,5 +1,4 @@
 import requests,json
-
 events = {}
 events_name_by_id = {}
 bet_types = {
