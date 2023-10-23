@@ -7,8 +7,22 @@ from fuzzywuzzy import fuzz
 from datetime import datetime
 from fonbet import main as fonbet_bets
 from olimp import main as olimp_bets
+from olimp import bets as o
+from fonbet import events as f
 overlapping_bids = [
     ["П1", "П2"],
+    ["П1 (Гейм 1)", "П2 (Гейм 1)"],
+    ["П1 (Гейм 2)", "П2 (Гейм 2)"],
+    ["П1 (Гейм 3)", "П2 (Гейм 3)"],
+    ["П1 (Гейм 4)", "П2 (Гейм 4)"],
+    ["П1 (Гейм 5)", "П2 (Гейм 5)"],
+    ["П1 (Гейм 6)", "П2 (Гейм 6)"],
+    ["П1 (Гейм 7)", "П2 (Гейм 7)"],
+    ["П1 (Гейм 8)", "П2 (Гейм 8)"],
+    ["П1 (Гейм 9)", "П2 (Гейм 9)"],
+    ["П1 (Гейм 10)", "П2 (Гейм 10)"],
+    ["П1 (Гейм 11)", "П2 (Гейм 11)"],
+    ["П1 (Гейм 12)", "П2 (Гейм 12)"],
     ["Ф1 (-6.5)", "Ф2 (+6.5)"],
     ["Ф1 (-5.5)", "Ф2 (+5.5)"],
     ["Ф1 (-4.5)", "Ф2 (+4.5)"],
@@ -16,6 +30,13 @@ overlapping_bids = [
     ["Ф1 (-2.5)", "Ф2 (+2.5)"],
     ["Ф1 (-1.5)", "Ф2 (+1.5)"],
     ["Ф1 (-0.5)", "Ф2 (+0.5)"],
+    ["Ф1 (+6.5)", "Ф2 (-6.5)"],
+    ["Ф1 (+5.5)", "Ф2 (-5.5)"],
+    ["Ф1 (+4.5)", "Ф2 (-4.5)"],
+    ["Ф1 (+3.5)", "Ф2 (-3.5)"],
+    ["Ф1 (+2.5)", "Ф2 (-2.5)"],
+    ["Ф1 (+1.5)", "Ф2 (-1.5)"],
+    ["Ф1 (+0.5)", "Ф2 (-0.5)"],
     ["ТБ (19.5)", "ТМ (19.5)"],
     ["ТБ (20.5)", "ТМ (20.5)"],
     ["ТБ (21.5)", "ТМ (21.5)"],
@@ -28,7 +49,64 @@ overlapping_bids = [
     ["ТБ (28.5)", "ТМ (28.5)"],
     ["ТБ (29.5)", "ТМ (29.5)"],
     ["ТБ (30.5)", "ТМ (30.5)"],
-    ["ТБ (31.5)", "ТМ (31.5)"]
+    ["ТБ (31.5)", "ТМ (31.5)"],
+    ["Ф1 (-6.5) (1-й сет)", "Ф2 (+6.5) (1-й сет)"],
+    ["Ф1 (-5.5) (1-й сет)", "Ф2 (+5.5) (1-й сет)"],
+    ["Ф1 (-4.5) (1-й сет)", "Ф2 (+4.5) (1-й сет)"],
+    ["Ф1 (-3.5) (1-й сет)", "Ф2 (+3.5) (1-й сет)"],
+    ["Ф1 (-2.5) (1-й сет)", "Ф2 (+2.5) (1-й сет)"],
+    ["Ф1 (-1.5) (1-й сет)", "Ф2 (+1.5) (1-й сет)"],
+    ["Ф1 (-0.5) (1-й сет)", "Ф2 (+0.5) (1-й сет)"],
+    ["Ф1 (-6.5) (2-й сет)", "Ф2 (+6.5) (2-й сет)"],
+    ["Ф1 (-5.5) (2-й сет)", "Ф2 (+5.5) (2-й сет)"],
+    ["Ф1 (-4.5) (2-й сет)", "Ф2 (+4.5) (2-й сет)"],
+    ["Ф1 (-3.5) (2-й сет)", "Ф2 (+3.5) (2-й сет)"],
+    ["Ф1 (-2.5) (2-й сет)", "Ф2 (+2.5) (2-й сет)"],
+    ["Ф1 (-1.5) (2-й сет)", "Ф2 (+1.5) (2-й сет)"],
+    ["Ф1 (-0.5) (2-й сет)", "Ф2 (+0.5) (2-й сет)"],
+    ["Ф1 (-6.5) (3-й сет)", "Ф2 (+6.5) (3-й сет)"],
+    ["Ф1 (-5.5) (3-й сет)", "Ф2 (+5.5) (3-й сет)"],
+    ["Ф1 (-4.5) (3-й сет)", "Ф2 (+4.5) (3-й сет)"],
+    ["Ф1 (-3.5) (3-й сет)", "Ф2 (+3.5) (3-й сет)"],
+    ["Ф1 (-2.5) (3-й сет)", "Ф2 (+2.5) (3-й сет)"],
+    ["Ф1 (-1.5) (3-й сет)", "Ф2 (+1.5) (3-й сет)"],
+    ["Ф1 (-0.5) (3-й сет)", "Ф2 (+0.5) (3-й сет)"],
+    ["ТБ (1.5) (1-й сет)", "ТМ (1.5) (1-й сет)"],
+    ["ТБ (2.5) (1-й сет)", "ТМ (2.5) (1-й сет)"],
+    ["ТБ (3.5) (1-й сет)", "ТМ (3.5) (1-й сет)"],
+    ["ТБ (4.5) (1-й сет)", "ТМ (4.5) (1-й сет)"],
+    ["ТБ (5.5) (1-й сет)", "ТМ (5.5) (1-й сет)"],
+    ["ТБ (6.5) (1-й сет)", "ТМ (6.5) (1-й сет)"],
+    ["ТБ (7.5) (1-й сет)", "ТМ (7.5) (1-й сет)"],
+    ["ТБ (8.5) (1-й сет)", "ТМ (8.5) (1-й сет)"],
+    ["ТБ (9.5) (1-й сет)", "ТМ (9.5) (1-й сет)"],
+    ["ТБ (10.5) (1-й сет)", "ТМ (10.5) (1-й сет)"],
+    ["ТБ (11.5) (1-й сет)", "ТМ (11.5) (1-й сет)"],
+    ["ТБ (12.5) (1-й сет)", "ТV (12.5) (1-й сет)"],
+    ["ТБ (1.5) (2-й сет)", "ТМ (1.5) (2-й сет)"],
+    ["ТБ (2.5) (2-й сет)", "ТМ (2.5) (2-й сет)"],
+    ["ТБ (3.5) (2-й сет)", "ТМ (3.5) (2-й сет)"],
+    ["ТБ (4.5) (2-й сет)", "ТМ (4.5) (2-й сет)"],
+    ["ТБ (5.5) (2-й сет)", "ТМ (5.5) (2-й сет)"],
+    ["ТБ (6.5) (2-й сет)", "ТМ (6.5) (2-й сет)"],
+    ["ТБ (7.5) (2-й сет)", "ТМ (7.5) (2-й сет)"],
+    ["ТБ (8.5) (2-й сет)", "ТМ (8.5) (2-й сет)"],
+    ["ТБ (9.5) (2-й сет)", "ТМ (9.5) (2-й сет)"],
+    ["ТБ (10.5) (2-й сет)", "ТМ (10.5) (2-й сет)"],
+    ["ТБ (11.5) (2-й сет)", "ТМ (11.5) (2-й сет)"],
+    ["ТБ (12.5) (2-й сет)", "ТМ (12.5) (2-й сет)"],
+    ["ТБ (1.5) (3-й сет)", "ТМ (1.5) (3-й сет)"],
+    ["ТБ (2.5) (3-й сет)", "ТМ (2.5) (3-й сет)"],
+    ["ТБ (3.5) (3-й сет)", "ТМ (3.5) (3-й сет)"],
+    ["ТБ (4.5) (3-й сет)", "ТМ (4.5) (3-й сет)"],
+    ["ТБ (5.5) (3-й сет)", "ТМ (5.5) (3-й сет)"],
+    ["ТБ (6.5) (3-й сет)", "ТМ (6.5) (3-й сет)"],
+    ["ТБ (7.5) (3-й сет)", "ТМ (7.5) (3-й сет)"],
+    ["ТБ (8.5) (3-й сет)", "ТМ (8.5) (3-й сет)"],
+    ["ТБ (9.5) (3-й сет)", "ТМ (9.5) (3-й сет)"],
+    ["ТБ (10.5) (3-й сет)", "ТМ (10.5) (3-й сет)"],
+    ["ТБ (11.5) (3-й сет)", "ТМ (11.5) (3-й сет)"],
+    ["ТБ (12.5) (3-й сет)", "ТМ (12.5) (3-й сет)"]
 ]
 
 
@@ -48,63 +126,72 @@ def find_similar_strings(dict1, dict2, threshold):
 
 cooldown = 0
 
-def start_scanner():
-    cooldown = 0
-    print("[STATUS] Scanner started.")
-    while True:
-        o = olimp_bets()
-        f = fonbet_bets()
-        events_flask.clear()
-        similar_strings = find_similar_strings(o, f, 70)
-        for event2, event in similar_strings:
-            for overlapping_bid in overlapping_bids:
-                if overlapping_bid[0] in o[event2].keys() and overlapping_bid[0] in f[event].keys() and overlapping_bid[1] in o[event2].keys() and overlapping_bid[1] in f[event].keys():
-                    # print(event,overlapping_bid)
-                    o1, o2, f1, f2 = o[event2][overlapping_bid[0]], o[event2][overlapping_bid[1]], f[event][overlapping_bid[0]], f[event][overlapping_bid[1]]
-                    if o1 != 0 and o2 != 0 and f1 != 0 and f2 != 0:
-                        k1 = (1 / o1) + (1 / f2)
-                        k2 = (1 / f1) + (1 / o2)
-                        if k1 < k2:
-                            percent = round((1 - k1) * 100, 2)
-                            if 10 > percent > 0:
-                                if not "".join([event,str(k1),str(k2)]) in first_appearance_times:
-                                    first_appearance_times[ "".join([event,str(k1),str(k2)])] = datetime.now()
-                                event_flask = {
-                                    'site1': "Fonbet",
-                                    'type1': overlapping_bid[1],
-                                    'link1': f[event]["url"],
-                                    'coefficient1': f2,
-                                    'matchName1': event,
-                                    'site2': "Olimp",
-                                    'type2': overlapping_bid[0],
-                                    'link2': o[event2]["url"],
-                                    'coefficient2': o1,
-                                    'matchName2': event2,
-                                    'profit': percent,
-                                    'time': first_appearance_times[ "".join([event,str(k1),str(k2)])].isoformat()
-                                }
-                                events_flask.append(event_flask)
-                                
-                        else:
-                            percent = round((1 - k2) * 100, 2)
-                            if 10 >percent > 0:
-                                if not "".join([event,str(k1),str(k2)]) in first_appearance_times:
-                                    first_appearance_times[ "".join([event,str(k1),str(k2)])] = datetime.now()
-                                event_flask = {
-                                    'site1': "Fonbet",
-                                    'type1': overlapping_bid[1],
-                                    'link1': f[event]["url"],
-                                    'coefficient1': f2,
-                                    'matchName1': event,
-                                    'site2': "Olimp",
-                                    'type2': overlapping_bid[0],
-                                    'link2': o[event2]["url"],
-                                    'coefficient2': o1,
-                                    'matchName2': event2,
-                                    'profit': percent,
-                                    'time': first_appearance_times[ "".join([event,str(k1),str(k2)])].isoformat()
-                                }
-                                events_flask.append(event_flask)
-        with app.app_context():
-            UpdateEvents(events_flask)
-        time.sleep(cooldown)
+def get_info(proxy):
+    # print(1,datetime.now())
+    start = datetime.now()
+    threads = []
+    thread = threading.Thread(target=olimp_bets, args=(proxy,))
+    thread.start()
+    threads.append(thread)
+    thread = threading.Thread(target=fonbet_bets, args=(proxy,))
+    thread.start()
+    threads.append(thread)
+    for thread in threads:
+        thread.join()
+    print("Olimp and Fonbet: ",datetime.now()-start)
+    # print(3,datetime.now())
+    events_flask.clear()
+    similar_strings = find_similar_strings(o, f, 70)
+    start = datetime.now()
+    for event2, event in similar_strings:
+        for overlapping_bid in overlapping_bids:
+            o_event2 = o.get(event2, {})  # Получить словарь o[event2] или пустой словарь, если event2 отсутствует
+            f_event = f.get(event, {})  # Получить словарь f[event] или пустой словарь, если event отсутствует
+            if overlapping_bid[0] in o_event2 and overlapping_bid[0] in f_event and overlapping_bid[1] in o_event2 and overlapping_bid[1] in f_event:
+                o1, o2, f1, f2 = o[event2][overlapping_bid[0]], o[event2][overlapping_bid[1]], f[event][overlapping_bid[0]], f[event][overlapping_bid[1]]
+                if o1 != 0 and o2 != 0 and f1 != 0 and f2 != 0:
+                    percent1 = 100 * (o1 / (1 + o1 / f2) - 1)
+                    percent2 = 100 * (f1 / (1 + f1 / o2) - 1)
+                    if percent1 > percent2:
+                        if percent1 > 0:
+                            if not "".join([event,str(percent1),str(percent2)]) in first_appearance_times:
+                                first_appearance_times[ "".join([event,str(percent1),str(percent2)])] = datetime.now()
+                            event_flask = {
+                                'site1': "Fonbet",
+                                'type1': overlapping_bid[1],
+                                'link1': f[event]["url"],
+                                'coefficient1': f2,
+                                'matchName1': event,
+                                'site2': "Olimp",
+                                'type2': overlapping_bid[0],
+                                'link2': o[event2]["url"],
+                                'coefficient2': o1,
+                                'matchName2': event2,
+                                'profit': round(percent1,2),
+                                'time': first_appearance_times[ "".join([event,str(percent1),str(percent2)])].isoformat()
+                            }
+                            events_flask.append(event_flask)
+                            
+                    else:
+                        if percent2 > 0:
+                            if not "".join([event,str(percent1),str(percent2)]) in first_appearance_times:
+                                first_appearance_times[ "".join([event,str(percent1),str(percent2)])] = datetime.now()
+                            event_flask = {
+                                'site1': "Fonbet",
+                                'type1': overlapping_bid[0],
+                                'link1': f[event]["url"],
+                                'coefficient1': f1,
+                                'matchName1': event,
+                                'site2': "Olimp",
+                                'type2': overlapping_bid[1],
+                                'link2': o[event2]["url"],
+                                'coefficient2': o2,
+                                'matchName2': event2,
+                                'profit': round(percent2,2),
+                                'time': first_appearance_times[ "".join([event,str(percent1),str(percent2)])].isoformat()
+                            }
+                            events_flask.append(event_flask)
+    if len(events_flask) > 0:
+        print(datetime.now(),"EVENTS")
+    with app.app_context():
+        UpdateEvents(events_flask)
