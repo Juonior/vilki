@@ -13,25 +13,50 @@ childs_event_by_id = {}
 bet_types = {
     910: "Ф1",
     912: "Ф2",
+    927: "Ф1",
+    928: "Ф2",
+    989: "Ф1",
+    991: "Ф2",
+    1569: "Ф1",
+    1572: "Ф2",
+    1672: "Ф1",
+    1675: "Ф2",
+    1677: "Ф1",
+    1678: "Ф2",
+    1680: "Ф1",
+    1681: "Ф2",
+    1683: "Ф1",
+    1684: "Ф2",
+    1686: "Ф1",
+    1687: "Ф2",
+    1845: "Ф1",
+    1846: "Ф2",
+
+
+
     921: "П1",
     923: "П2",
+
+    930: "ТБ",
+    931: "ТМ",
     1696: "ТБ",
     1697: "ТМ",
     1727: "ТБ",
     1728: "ТМ",
-    1845: "Ф1",
-    1846: "Ф2",
+    1730: "ТБ",
+    1731: "ТМ",
+    1739: "ТБ",
+    1791: "ТМ",
+    1793: "ТБ",
+    1794: "ТМ",
+    1796: "ТБ",
+    1797: "ТМ",
+    1733: "ТБ",
+    1734: "ТМ",
+    1736: "ТБ",
+    1737: "ТМ",
     1848: "ТБ",
     1849: "ТМ",
-    1747: "Гейм",
-    1748: "Гейм",
-    1750: "Гейм",
-    1751: "Гейм",
-    1753: "Гейм",
-    1754: "Гейм",
-    9961: "Гейм",
-    9962: "Гейм"
-
 }
 def main(localIP):
     global events
@@ -46,7 +71,7 @@ def main(localIP):
         if event["sportId"] in sports_id:
             if int(time.time()) >= event["startTime"]:
                 if "team1" in event and "team2" in event:
-                    events[event["team1"]+" - "+event["team2"]] = {"id": event["id"], "childs": [],"type": "tennis"}
+                    events[event["team1"]+" - "+event["team2"]] = {"id": event["id"], "childs": [],"type": "basketball"}
                     events_name_by_id[ event["id"]] = {"name": event["team1"]+" - "+event["team2"], "sportid": event["sportId"], "bets_type": "Основные" }
                 if "parentId" in event:
                     if event["parentId"] in events_name_by_id.keys():
@@ -59,15 +84,19 @@ def main(localIP):
             event_name = events_name_by_id[event["e"]]["name"]
             sport_id = events_name_by_id[event["e"]]["sportid"]
             event_id = event["e"]
-            events[event_name]["url"] = f"https://www.fon.bet/live/tennis/{sport_id}/{event_id}/"
+            events[event_name]["url"] = f"https://www.fon.bet/live/basketball/{sport_id}/{event_id}/"
+            print(event_name, events[event_name]["url"])
             for factor in event["factors"]:
                 if factor['f'] in bet_types.keys():
                     if factor["f"] == 921 or factor["f"] == 923:
                         events[event_name][bet_types[factor['f']]] = factor["v"]
                     else:
                         events[event_name][bet_types[factor['f']] + " ("+factor["pt"]+")"] = factor["v"]
-            print(events[event_name])
-            return
+            for factor in event["factors"]:
+                if not factor['f'] in bet_types.keys():
+                    print(factor)
+            # if event_name == "Нью-Тайпей Кингс - Мералко Болтс":
+            #     return
         # elif event["e"] in childs_event_by_id.keys():
         #     event_name =  events_name_by_id[childs_event_by_id[event["e"]]["parent"]]["name"]
         #     # print(event_name)
@@ -91,4 +120,5 @@ def main(localIP):
         #                     events[event_name][bet_types[factor['f']] + " ("+factor["pt"]+") ("+child_name+")"] = factor["v"]
         
     # return events
-main("192.168.2.211")
+# main("192.168.2.211") 
+main("10.192.219.161")
