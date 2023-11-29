@@ -2,15 +2,23 @@ import threading
 from app import app
 from app import socketio
 from app.routes import get_info
-import time
+import time, socket
 
-proxies = [
-    "http://gR8bNG1g:jknP4TJU@194.156.122.187:64290",
-    "http://gR8bNG1g:jknP4TJU@45.152.226.38:61950",
-    "http://gR8bNG1g:jknP4TJU@194.61.77.242:64644",
-    "http://gR8bNG1g:jknP4TJU@195.19.168.209:62036",
-    "http://gR8bNG1g:jknP4TJU@109.94.211.231:61930"
-]
+
+def get_additional_ips():
+    additional_ips = []
+    hostname = socket.gethostname()
+    try:
+        ips = socket.gethostbyname_ex(hostname)
+        # Индекс 2 в возвращаемом кортеже содержит список дополнительных IP-адресов
+        additional_ips = ips[2]
+    except socket.gaierror as e:
+        print(f"Ошибка: {e}")
+    
+    return additional_ips
+
+additional_ips = get_additional_ips()
+# additional_ips = ["192.168.2.211", "192.168.2.211", "192.168.2.211","192.168.2.211"]
 def start_scanner():
     print("[STATUS] Scanner started.")
     i = 0
@@ -19,9 +27,12 @@ def start_scanner():
         # t.daemon = True  # Помечаем поток как демон, чтобы он завершился при завершении главного потока.
         # t.start()
         # time.sleep(2)
-        get_info(proxies[i])
+        try:
+            get_info(additional_ips[i])
+        except Exception as ex:
+            print(ex)
         # print(proxies[i])
-        i = (i + 1) % len(proxies)
+        i = (i + 1) % len(additional_ips)
         # time.sleep(0.5)
 
 
