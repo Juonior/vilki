@@ -102,7 +102,7 @@ def get_info(event_id):
 def main(localIp):
     global bets
     session = session_for_src_addr(localIp)
-    response = session.get("https://www.olimp.bet/api/v4/0/live/sports-with-competitions-with-events?vids[]=3:", verify=False, headers=headers).json()
+    response = session.get("https://www.olimp.bet/api/v4/0/live/broadcast/sports-with-competitions-with-events", verify=False, headers=headers).json()
     session.close()
     i = 0
     threads = []

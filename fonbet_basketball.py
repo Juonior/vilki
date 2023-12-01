@@ -35,7 +35,10 @@ bet_types = {
 
 
     921: "П1",
+    922: "Ничья",
     923: "П2",
+    924: "П1 или Ничья",
+    925: "П2 или Ничья",
 
     930: "ТБ",
     931: "ТМ",
@@ -85,40 +88,30 @@ def main(localIP):
             sport_id = events_name_by_id[event["e"]]["sportid"]
             event_id = event["e"]
             events[event_name]["url"] = f"https://www.fon.bet/live/basketball/{sport_id}/{event_id}/"
-            print(event_name, events[event_name]["url"])
+            # print(event_name, events[event_name]["url"])
             for factor in event["factors"]:
-                if factor['f'] in bet_types.keys():
-                    if factor["f"] == 921 or factor["f"] == 923:
+                if factor['f'] in bet_types.keys() and "pt" in factor.keys():
+                    if 921 >= factor["f"] <= 925:
                         events[event_name][bet_types[factor['f']]] = factor["v"]
                     else:
                         events[event_name][bet_types[factor['f']] + " ("+factor["pt"]+")"] = factor["v"]
-            for factor in event["factors"]:
-                if not factor['f'] in bet_types.keys():
-                    print(factor)
+            # for factor in event["factors"]:
+            #     if not factor['f'] in bet_types.keys():
+            #         print(factor)
             # if event_name == "Нью-Тайпей Кингс - Мералко Болтс":
             #     return
-        # elif event["e"] in childs_event_by_id.keys():
-        #     event_name =  events_name_by_id[childs_event_by_id[event["e"]]["parent"]]["name"]
-        #     # print(event_name)
-        #     child_name = childs_event_by_id[event["e"]]["name"]
-        #     set = ""
-        #     if "сет" in child_name:
-        #         set = f"({child_name})"
-        #     # if event_name == "Томич Б - Мицуи Ш":
-        #         # print(event["factors"],child_name)
-        #     child_name = childs_event_by_id[event["e"]]["name"]
-        #     if not "/" in event_name:
-        #         for factor in event["factors"]:
-        #             if factor['f'] in bet_types.keys():
-        #                 if factor["f"] == 921 or factor["f"] == 923:
-        #                     events[event_name][bet_types[factor['f']]+ " ("+child_name+")"] = factor["v"]
-        #                 elif factor["f"] == 1747 or factor["f"] == 1750 or factor["f"] == 1753 or factor["f"] == 9961:
-        #                     events[event_name]["П1 (Гейм "+factor["pt"]+") "+set] = factor["v"]
-        #                 elif factor["f"] == 1748 or factor["f"] == 1751 or factor["f"] == 1754 or factor["f"] == 9962:
-        #                     events[event_name]["П2 (Гейм "+factor["pt"]+") "+set] = factor["v"]
-        #                 else:
-        #                     events[event_name][bet_types[factor['f']] + " ("+factor["pt"]+") ("+child_name+")"] = factor["v"]
-        
+        elif event["e"] in childs_event_by_id.keys():
+            event_name =  events_name_by_id[childs_event_by_id[event["e"]]["parent"]]["name"]
+            child_name = childs_event_by_id[event["e"]]["name"]
+            for factor in event["factors"]:
+                if factor['f'] in bet_types.keys():
+                    if 921 <= factor["f"] <= 925:
+                        events[event_name][f"({child_name}) "+bet_types[factor['f']]] = factor["v"]
+                    else:
+                        events[event_name][f"({child_name}) "+bet_types[factor['f']] + " ("+factor["pt"]+")"] = factor["v"]
+
+            
     # return events
 # main("192.168.2.211") 
 main("10.192.219.161")
+print(events)
